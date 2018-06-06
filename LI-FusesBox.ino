@@ -1,6 +1,9 @@
 
 #include <SPI.h>
 #include <MFRC522.h>
+#define redLed 9
+#define greenLed A5
+#define btnLed A4
 const byte readersNb = 8;
 const byte RST_PIN = A0;          // Configurable, see typical pin layout above
 const byte SS_PIN[8] = {3, 5, 8, A3, A2, A1, 7, 6};         // Configurable, see typical pin layout above
@@ -10,6 +13,12 @@ MFRC522 mfrc522[8];  // Create MFRC522 instance
 
 void setup() {
   pinMode(2, INPUT_PULLUP);
+  pinMode(btnLed, OUTPUT);
+  digitalWrite(btnLed, 1);
+  pinMode(greenLed, OUTPUT);
+  digitalWrite(greenLed, 0);
+  pinMode(redLed, OUTPUT);
+  digitalWrite(redLed, 1);
   Serial.begin(9600);   // Initialize serial communications with the PC
   while (!Serial);    // Do nothing if no serial port is opened (added for Arduinos based on ATMEGA32U4)
   SPI.begin();      // Init SPI bus
@@ -41,8 +50,9 @@ void checkReaders(){
 }
 
 void loop() {
-  
+  bool state = false;
   if(digitalRead(2) == 0) {
+    digitalWrite(btnLed, 0);
     //Serial.println("button pushed");
     for(int i =0; i < 8; i++){
       fuses[i] = "0";
@@ -72,6 +82,7 @@ void loop() {
                 if(fuses[6] == "231169"){
                   if(fuses[7] == "23220"){
                     Serial.println("Seq 01 OK");
+                    state = true;
                   }
                 }
               }
@@ -87,6 +98,7 @@ void loop() {
                 if(fuses[6] == "10352"){
                   if(fuses[7] == "103218"){
                     Serial.println("Seq 02 OK");
+                    state = true;
                   }
                 }
               }
@@ -95,12 +107,24 @@ void loop() {
         }
       }
     }
-    else{
+    if(state == false){
       Serial.println("Seq error");
+      digitalWrite(greenLed, 0);
+      digitalWrite(redLed, 1);
+      delay(3000);
+      digitalWrite(redLed, 0);
+    }
+    else{
+      digitalWrite(greenLed, 1);
+      digitalWrite(redLed, 0);
+      delay(3000);
+      digitalWrite(greenLed, 0);
     }
     delay(500);
+    digitalWrite(btnLed, 1);
   }
   delay(200);
+  
     
 
   
