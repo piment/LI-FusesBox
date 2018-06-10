@@ -4,6 +4,9 @@
 #define redLed 9
 #define greenLed A5
 #define btnLed A4
+#define relay 4
+
+volatile bool state = false;
 const byte readersNb = 8;
 const byte RST_PIN = A0;          // Configurable, see typical pin layout above
 const byte SS_PIN[8] = {3, 5, 8, A3, A2, A1, 7, 6};         // Configurable, see typical pin layout above
@@ -19,6 +22,8 @@ void setup() {
   digitalWrite(greenLed, 0);
   pinMode(redLed, OUTPUT);
   digitalWrite(redLed, 1);
+  pinMode(relay, OUTPUT);
+  digitalWrite(relay, 0);
   Serial.begin(9600);   // Initialize serial communications with the PC
   while (!Serial);    // Do nothing if no serial port is opened (added for Arduinos based on ATMEGA32U4)
   SPI.begin();      // Init SPI bus
@@ -50,7 +55,7 @@ void checkReaders(){
 }
 
 void loop() {
-  bool state = false;
+  
   if(digitalRead(2) == 0) {
     digitalWrite(btnLed, 0);
     //Serial.println("button pushed");
@@ -84,10 +89,28 @@ void loop() {
                     Serial.println("Seq 01 OK");
                     state = true;
                   }
+                  else{
+                    state = false;
+                  } 
+                }
+                else{
+                  state = false;
                 }
               }
+              else{
+                state = false;
+              }
+            }
+            else{
+              state = false;
             }
           }
+          else{
+            state = false;
+          }
+        }
+        else{
+          state = false;
         }
       }
       else if(fuses[1] == "23220"){
@@ -100,29 +123,59 @@ void loop() {
                     Serial.println("Seq 02 OK");
                     state = true;
                   }
+                  else{
+                    state = false;
+                  }
+                }
+                else{
+                  state = false;
                 }
               }
+              else{
+                state = false;
+              }
+            }
+            else{
+              state = false;
             }
           }
+          else{
+            state = false;
+          }
+        }
+        else{
+          state = false;
         }
       }
-    }
-    if(state == false){
-      Serial.println("Seq error");
-      digitalWrite(greenLed, 0);
-      digitalWrite(redLed, 1);
-      delay(3000);
-      digitalWrite(redLed, 0);
+      else{
+        state = false;
+      }
     }
     else{
-      digitalWrite(greenLed, 1);
-      digitalWrite(redLed, 0);
-      delay(3000);
-      digitalWrite(greenLed, 0);
-    }
+        state = false;
+      }
+    
+    
+    
     delay(500);
     digitalWrite(btnLed, 1);
   }
+  if(state == false){
+      //Serial.println("Seq error");
+      digitalWrite(greenLed, 0);
+      digitalWrite(redLed, 1);
+      //delay(3000);
+      //digitalWrite(redLed, 0);
+      digitalWrite(relay, 0);
+    }
+    else{
+      digitalWrite(relay, 1);
+      digitalWrite(redLed, 0);
+      digitalWrite(greenLed, 1);
+      //delay(3000);
+      //digitalWrite(relay, 0);
+      //digitalWrite(greenLed, 0);
+    }
   delay(200);
   
     
