@@ -24,16 +24,16 @@ void setup() {
   digitalWrite(redLed, 1);
   pinMode(relay, OUTPUT);
   digitalWrite(relay, 0);
-  Serial.begin(9600);   // Initialize serial communications with the PC
-  while (!Serial);    // Do nothing if no serial port is opened (added for Arduinos based on ATMEGA32U4)
+  //Serial.begin(9600);   // Initialize serial communications with the PC
+  //while (!Serial);    // Do nothing if no serial port is opened (added for Arduinos based on ATMEGA32U4)
   SPI.begin();      // Init SPI bus
   for (uint8_t i = 0; i < 8; i++){
     mfrc522[i].PCD_Init(SS_PIN[i], RST_PIN);    // Init MFRC522
-    //mfrc522[i].PCD_SetAntennaGain(mfrc522[i].RxGain_max);
-    mfrc522[i].PCD_DumpVersionToSerial(); // Show details of PCD - MFRC522 Card Reader details
+    mfrc522[i].PCD_SetAntennaGain(mfrc522[i].RxGain_max);
+    //mfrc522[i].PCD_DumpVersionToSerial(); // Show details of PCD - MFRC522 Card Reader details
   }
   
-  Serial.println(F("Scan PICC to see UID, SAK, type, and data blocks..."));
+  //Serial.println(F("Scan PICC to see UID, SAK, type, and data blocks..."));
 }
 
 void checkReaders(){
@@ -66,7 +66,7 @@ void loop() {
     checkReaders();
     delay(100);
     checkReaders();
-    Serial.print("[");
+    /*Serial.print("[");
     for(int i = 0; i < 8; i++){
       
       Serial.print(fuses[i]);
@@ -76,7 +76,7 @@ void loop() {
       else {
         Serial.print(", ");
       }
-    }
+    }*/
     //Fuses ID seq 1 [183219, 103218, 10352, 215218, 752, 55219, 231169, 23220]
     //Fuses ID seq 2 [183219, 23220, 231169, 55219, 752, 215218, 10352, 103218]
     if(fuses[0] == "183219"){
@@ -87,7 +87,7 @@ void loop() {
               if(fuses[5] == "55219"){
                 if(fuses[6] == "231169"){
                   if(fuses[7] == "23220"){
-                    Serial.println("Seq 01 OK");
+                    //Serial.println("Seq 01 OK");
                     state = true;
                   }
                   else{
@@ -121,7 +121,7 @@ void loop() {
               if(fuses[5] == "215218"){
                 if(fuses[6] == "10352"){
                   if(fuses[7] == "103218"){
-                    Serial.println("Seq 02 OK");
+                    //Serial.println("Seq 02 OK");
                     state = true;
                   }
                   else{
